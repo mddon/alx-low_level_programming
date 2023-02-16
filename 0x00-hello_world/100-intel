@@ -1,0 +1,2 @@
+#!/vin/bash
+gcc -S -masm-intel $CFILE
