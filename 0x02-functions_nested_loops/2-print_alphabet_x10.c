@@ -1,4 +1,5 @@
 #include "main.h"
+
 /**
  * print_alphabet_10x - function that prints 10x alphabets
  * Return: always 0
