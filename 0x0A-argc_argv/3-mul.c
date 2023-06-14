@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /**
- * main - Entry point
+ * main - Prints the addition of positive numbers
  * @argc: arg count
  * @argv: arg vector
  * Return: success
@@ -10,12 +10,13 @@
 
 int main(int argc, char *argv[])
 {
-	int a = 1, b;
-	if(argc == 3)
+	int k = 1, b;
+
+	if (argc == 3)
 	{
 		for (b = 1; b < argc; b++)
-			a = a * strtol(argv[b], NULL, 10);
-		printf("%d\n", a);
+			k = k * strtol(argv[b], NULL, 10);
+		printf("%d\n", k);
 	}
 	else
 	{
