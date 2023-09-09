@@ -26,7 +26,6 @@ void hash_table_print(const hash_table_t *ht)
 		{
 			if (comma_flag == 1)
 				printf(",");
-	
 			current_node = ht->array[k];
 			while (current_node != NULL)
 			{
