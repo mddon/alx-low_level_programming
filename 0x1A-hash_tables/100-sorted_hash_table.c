@@ -1,10 +1,10 @@
 #include "hash_tables.h"
 
 /**
- * shash_table_create - Creates a sorted hash table.
+ * shash_table_create - Function that creates a sorted hash table.
  * @size: The size of the new sorted hash table.
  *
- * Return: If an error occurs - NULL.
+ * Return: If an error occurs return NULL.
  *         Otherwise - a pointer to the new sorted hash table.
  */
 shash_table_t *shash_table_create(unsigned long int size)
@@ -35,87 +35,89 @@ shash_table_t *shash_table_create(unsigned long int size)
 }
 
 /**
- * shash_table_set - Adds an element to a sorted hash table.
+ * shash_table_set - Function that adds an element to a sorted hash table.
  * @ht: A pointer to the sorted hash table.
  * @key: The key to add - cannot be an empty string.
- * @value: The value associated with key.
+ * @value: Value associated with key.
  *
- * Return: Upon failure - 0.
- *         Otherwise - 1.
+ * Return: If failure return 0.
+ *         Otherwise return 1.
  */
+
 int shash_table_set(shash_table_t *ht, const char *key, const char *value)
 {
-	shash_node_t *new_node, *tmp_node;
+	/* Variables */
+	shash_node_t *new, *node;
 	char *value_copy;
 	unsigned long int index;
 
-	if (!ht || !key || !*key || !value)
+	/* Check for NULL parameters and empty key */
+	if (ht == NULL || key == NULL || *key == '\0' || value == NULL)
 		return (0);
 
+	/* Copy the value */
 	value_copy = strdup(value);
-	if (!value_copy)
+	if (value_copy == NULL)
 		return (0);
 
+	/* Calculate the index for the key */
 	index = key_index((const unsigned char *)key, ht->size);
-	tmp_node = ht->shead;
+	node = ht->shead;
 
-	while (tmp_node)
+	/* Check if the key already exists */
+	while (node != NULL)
 	{
-		if (strcmp(tmp_node->key, key) == 0)
+		if (strcmp(node->key, key) == 0)
 		{
-			free(tmp_node->value);
-			tmp_node->value = value_copy;
+			free(node->value);
+			node->value = value_copy;
+			free(value_copy);
 			return (1);
 		}
-		tmp_node = tmp_node->snext;
+		node = node->snext;
 	}
 
-	new_node = malloc(sizeof(shash_node_t));
-	if (!new_node)
+	/* Allocate memory for the new node */
+	new = malloc(sizeof(shash_node_t));
+	if (new == NULL)
 	{
 		free(value_copy);
 		return (0);
 	}
 
-	new_node->key = strdup(key);
-	if (!new_node->key)
+	/* Copy the key and assign values */
+	new->key = strdup(key);
+	if (new->key == NULL)
 	{
 		free(value_copy);
-		free(new_node);
+		free(new);
 		return (0);
 	}
+	new->value = value_copy;
+	new->next = ht->array[index];
+	ht->array[index] = new;
 
-	new_node->value = value_copy;
-	new_node->next = ht->array[index];
-	ht->array[index] = new_node;
-
-	if (!ht->shead)
+	/* Insert the new node into the sorted linked list */
+	if (ht->shead == NULL || strcmp(ht->shead->key, key) >= 0)
 	{
-		new_node->sprev = NULL;
-		new_node->snext = NULL;
-		ht->shead = new_node;
-		ht->stail = new_node;
-	}
-	else if (strcmp(ht->shead->key, key) > 0)
-	{
-		new_node->sprev = NULL;
-		new_node->snext = ht->shead;
-		ht->shead->sprev = new_node;
-		ht->shead = new_node;
+		new->sprev = NULL;
+		new->snext = ht->shead;
+		if (ht->shead != NULL)
+			ht->shead->sprev = new;
+		ht->shead = new;
 	}
 	else
 	{
-		tmp_node = ht->shead;
-		while (tmp_node->snext != NULL && strcmp(tmp_node->snext->key, key) < 0)
-			tmp_node = tmp_node->snext;
-
-		new_node->sprev = tmp_node;
-		new_node->snext = tmp_node->snext;
-		if (tmp_node->snext == NULL)
-			ht->stail = new_node;
+		node = ht->shead;
+		while (node->snext != NULL && strcmp(node->snext->key, key) < 0)
+			node = node->snext;
+		new->sprev = node;
+		new->snext = node->snext;
+		if (node->snext == NULL)
+			ht->stail = new;
 		else
-			tmp_node->snext->sprev = new_node;
-		tmp_node->snext = new_node;
+			node->snext->sprev = new;
+		node->snext = new;
 	}
 
 	return (1);
