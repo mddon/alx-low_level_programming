@@ -4,7 +4,7 @@
  * linear_search - searches for a value in an array of
  * integers using the Linear search algorithm
  *
- * @array: array input 
+ * @array: array input
  * @value: value to search in
  * @size: size of array
  * Return: Always EXIT_SUCCESS
