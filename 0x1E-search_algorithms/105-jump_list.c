@@ -12,31 +12,32 @@
  */
 listint_t *jump_list(listint_t *list, size_t size, int value)
 {
-	size_t jump_size, block_index;
+	size_t js, bs;	/* js for jump_step, bs for block_size */
 	listint_t *prev;
 
 	if (list == NULL || size == 0)
 		return (NULL);
 
-	jump_size = (size_t)sqrt((double)size);
-	block_index = 0;
+	bs = (size_t)sqrt((double)size);
+	js = 0;
 
 	do {
 		prev = list;
-		block_index++;
-		size_t index = block_index * jump_size;
+		js++;
+		bs = js * bs;
 
-		while (list->next && list->index < index)
+		while (list->next && list->index < bs)
 			list = list->next;
 
-		if (list->next == NULL && index != list->index)
-			index = list->index;
+		if (list->next == NULL && bs != list->index)
+			bs = list->index;
 
-		printf("Value checked at index [%d] = [%d]\n", (int)index, list->n);
+		printf("Value checked at index [%d] = [%d]\n", (int)bs, list->n);
 
-	} while (list->next && list->n < value && list->index < size);
+	} while (bs < size && list->next && list->n < value);
 
-	printf("Value found between indexes [%d] and [%d]\n", (int)prev->index, (int)list->index);
+	printf("Value found between indexes ");
+	printf("[%d] and [%d]\n", (int)prev->index, (int)list->index);
 
 	for (; prev && prev->index <= list->index; prev = prev->next)
 	{
