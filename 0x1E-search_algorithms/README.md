@@ -1,1 +1,1 @@
-earch_algorithms
+Readme documentation on search algorithms projects
